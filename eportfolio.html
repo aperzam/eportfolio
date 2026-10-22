@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>e-Portfolio | Raphaël Depuydt</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #ffffff;
+            color: #1e293b;
+        }
+        /* Barre de navigation sobre avec léger flou */
+        .simple-nav {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(8px);
+        }
+        .tab-active {
+            color: #0f172a;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-slate-800 selection:text-white flex flex-col min-h-screen">
+
+    <!-- ================= NOTIFICATION DISCRÈTE (Remplace alert()) ================= -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none bg-slate-900 text-white px-4 py-3 rounded-lg shadow-lg text-sm flex items-center gap-3">
+        <i class="fa-solid fa-circle-info text-blue-400"></i>
+        <span id="toast-msg">Notification</span>
+    </div>
+
+    <!-- ================= NAVIGATION ================= -->
+    <header class="fixed top-0 left-0 right-0 z-40 simple-nav border-b border-slate-200">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+            <!-- Nom -->
+            <a href="#accueil" onclick="navigateToSection(event, 'accueil')" class="font-semibold text-slate-900 text-lg tracking-tight">
+                Raphaël Depuydt
+            </a>
+
+            <!-- Liens Desktop -->
+            <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
+                <a href="#accueil" onclick="navigateToSection(event, 'accueil')" id="nav-home-link" class="hover:text-slate-900 transition-colors tab-active" data-i18n="nav_home">Accueil</a>
+                <a href="#parcours" onclick="navigateToSection(event, 'parcours')" class="hover:text-slate-900 transition-colors" data-i18n="nav_academic">Parcours</a>
+                <a href="#mobilite" onclick="navigateToSection(event, 'mobilite')" class="hover:text-slate-900 transition-colors" data-i18n="nav_mobility">Mobilité</a>
+                <a href="#engagement" onclick="navigateToSection(event, 'engagement')" class="hover:text-slate-900 transition-colors" data-i18n="nav_civic">Engagement</a>
+                <a href="#hobbies" onclick="navigateToSection(event, 'hobbies')" class="hover:text-slate-900 transition-colors" data-i18n="nav_hobbies">Sports & Hobbies</a>
+                
+                <span class="h-4 w-px bg-slate-300"></span>
+                
+                <!-- Onglet Projets à part entière -->
+                <button onclick="switchTab('projects')" id="nav-projects-btn" class="px-3 py-1.5 rounded-lg text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition-all flex items-center gap-1.5 font-medium">
+                    <i class="fa-solid fa-code text-xs text-blue-600"></i>
+                    <span data-i18n="nav_projects">Projets</span>
+                </button>
+            </nav>
+
+            <!-- Bouton de langue FR / EN & Menu Mobile -->
+            <div class="flex items-center gap-3">
+                <button onclick="toggleLanguage()" class="px-3 py-1.5 rounded-md border border-slate-300 hover:border-slate-400 bg-slate-50 text-xs font-semibold text-slate-700 transition-colors flex items-center gap-1.5" title="Change language">
+                    <i class="fa-solid fa-globe text-slate-500"></i>
+                    <span id="lang-btn-text">EN</span>
+                </button>
+
+                <button onclick="toggleMobileMenu()" class="md:hidden p-2 text-slate-600 hover:text-slate-900">
+                    <i id="mobile-icon" class="fa-solid fa-bars text-lg"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Menu Mobile -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-slate-200 px-4 py-3 space-y-2 text-sm font-medium text-slate-700">
+            <a href="#accueil" onclick="navigateToSection(event, 'accueil'); toggleMobileMenu()" class="block py-1.5 hover:text-slate-900" data-i18n="nav_home">Accueil</a>
+            <a href="#parcours" onclick="navigateToSection(event, 'parcours'); toggleMobileMenu()" class="block py-1.5 hover:text-slate-900" data-i18n="nav_academic">Parcours</a>
+            <a href="#mobilite" onclick="navigateToSection(event, 'mobilite'); toggleMobileMenu()" class="block py-1.5 hover:text-slate-900" data-i18n="nav_mobility">Mobilité</a>
+            <a href="#engagement" onclick="navigateToSection(event, 'engagement'); toggleMobileMenu()" class="block py-1.5 hover:text-slate-900" data-i18n="nav_civic">Engagement</a>
+            <a href="#hobbies" onclick="navigateToSection(event, 'hobbies'); toggleMobileMenu()" class="block py-1.5 hover:text-slate-900" data-i18n="nav_hobbies">Sports & Hobbies</a>
+            <div class="pt-2 border-t border-slate-100">
+                <button onclick="switchTab('projects'); toggleMobileMenu()" class="w-full text-left py-1.5 text-blue-600 font-semibold flex items-center gap-2">
+                    <i class="fa-solid fa-code text-xs"></i>
+                    <span data-i18n="nav_projects">Projets</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ================= VUE 1 : ONGLET PRINCIPAL (PROFIL) ================= -->
+    <main id="view-main" class="flex-grow">
+
+        <!-- 1. ACCUEIL (HERO + VIDÉO VISIBLE DÈS L'ARRIVÉE) -->
+        <section id="accueil" class="pt-28 pb-16 md:pt-36 md:pb-24 border-b border-slate-100">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+                    
+                    <!-- Colonne Gauche : Présentation + Liens CV & LinkedIn -->
+                    <div class="lg:col-span-6 space-y-5">
+                        <p class="text-sm font-medium text-blue-600 uppercase tracking-wider" data-i18n="hero_subtitle">
+                            e-Portfolio — Élève-Ingénieur
+                        </p>
+                        <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight">
+                            Raphaël Depuydt
+                        </h1>
+                        <p class="text-slate-600 leading-relaxed text-base" data-i18n="hero_bio">
+                            Étudiant en école d'ingénieurs (Toulouse INP - ENSEEIHT) spécialisé en Sciences du Numérique. Bienvenue sur mon e-Portfolio qui regroupe mon parcours académique, mon projet de mobilité, mes engagements et mes réalisations.
+                        </p>
+
+                        <!-- Boutons CV FR, CV EN, LinkedIn & Raccourci Projets -->
+                        <div class="pt-2 flex flex-wrap gap-3">
+                            <a href="CV_FR.pdf" target="_blank" onclick="handlePdfClick(event, 'CV_FR.pdf')" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-sm font-medium transition-colors">
+                                <i class="fa-regular fa-file-pdf"></i>
+                                <span data-i18n="btn_cv_fr">CV (Français)</span>
+                            </a>
+
+                            <a href="CV_EN.pdf" target="_blank" onclick="handlePdfClick(event, 'CV_EN.pdf')" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-white hover:bg-slate-50 text-slate-800 border border-slate-300 text-sm font-medium transition-colors">
+                                <i class="fa-regular fa-file-pdf text-slate-500"></i>
+                                <span data-i18n="btn_cv_en">CV (English)</span>
+                            </a>
+
+                            <a href="https://www.linkedin.com/in/raphaël-d-4a7b54256" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#0A66C2] hover:bg-[#004182] text-white text-sm font-medium transition-colors">
+                                <i class="fa-brands fa-linkedin"></i>
+                                <span>LinkedIn</span>
+                            </a>
+
+                            <button onclick="switchTab('projects')" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-sm font-medium transition-colors">
+                                <i class="fa-solid fa-folder-open text-slate-600"></i>
+                                <span data-i18n="btn_see_projects">Voir mes projets</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Colonne Droite : Lecteur Vidéo de présentation -->
+                    <div class="lg:col-span-6">
+                        <div class="rounded-xl overflow-hidden border border-slate-200 bg-slate-50 shadow-sm">
+                            <div class="aspect-video bg-slate-900 relative">
+                                <video 
+                                    id="pitch-video"
+                                    class="w-full h-full object-cover" 
+                                    controls 
+                                    preload="metadata"
+                                    poster="https://placehold.co/800x450/1e293b/ffffff?text=Ma+Video+de+Presentation">
+                                    <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" type="video/mp4">
+                                    Votre navigateur ne supporte pas la lecture vidéo.
+                                </video>
+                            </div>
+                            <div class="px-4 py-2.5 bg-white flex items-center justify-between text-xs text-slate-500">
+                                <span data-i18n="video_caption">Vidéo de présentation (Elevator Pitch)</span>
+                                <i class="fa-solid fa-video text-slate-400"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. PARCOURS ACADÉMIQUE -->
+        <section id="parcours" class="py-16 md:py-20 border-b border-slate-100">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6">
+                <h2 class="text-2xl font-bold text-slate-900 mb-8" data-i18n="acad_title">Parcours académique</h2>
+
+                <div class="space-y-8 border-l-2 border-slate-200 pl-6 ml-2">
+                    
+                    <!-- Étape 1 : École d'ingénieurs -->
+                    <div class="relative">
+                        <div class="absolute -left-[31px] top-1.5 w-3.5 h-3.5 rounded-full bg-blue-600 border-2 border-white"></div>
+                        <span class="text-xs font-semibold text-blue-600 uppercase tracking-wide">2024 — 2027</span>
+                        <h3 class="text-lg font-semibold text-slate-900 mt-0.5" data-i18n="acad_1_title">Diplôme d'Ingénieur — Toulouse INP - ENSEEIHT</h3>
+                        <p class="text-sm text-slate-500" data-i18n="acad_1_sub">Filière Sciences du Numérique (Toulouse, France)</p>
+                        <p class="text-sm text-slate-600 mt-2 leading-relaxed max-w-3xl" data-i18n="acad_1_desc">
+                            Formation d'ingénieur en informatique, développement logiciel, systèmes embarqués, réseaux et mathématiques appliquées. Réalisation de projets techniques en équipe.
+                        </p>
+                    </div>
+
+                    <!-- Étape 2 : CPGE -->
+                    <div class="relative">
+                        <div class="absolute -left-[31px] top-1.5 w-3.5 h-3.5 rounded-full bg-slate-400 border-2 border-white"></div>
+                        <span class="text-xs font-semibold text-slate-500 uppercase tracking-wide">2022 — 2024</span>
+                        <h3 class="text-lg font-semibold text-slate-900 mt-0.5" data-i18n="acad_2_title">Classes Préparatoires aux Grandes Écoles (CPGE)</h3>
+                        <p class="text-sm text-slate-500" data-i18n="acad_2_sub">Filière MP2I / MPI</p>
+                        <p class="text-sm text-slate-600 mt-2 leading-relaxed max-w-3xl" data-i18n="acad_2_desc">
+                            Deux années de formation intensive en informatique, mathématiques et physique en vue des concours nationaux d'entrée aux grandes écoles d'ingénieurs.
+                        </p>
+                    </div>
+
+                    <!-- Étape 3 : Baccalauréat -->
+                    <div class="relative">
+                        <div class="absolute -left-[31px] top-1.5 w-3.5 h-3.5 rounded-full bg-slate-300 border-2 border-white"></div>
+                        <span class="text-xs font-semibold text-slate-500 uppercase tracking-wide">2022</span>
+                        <h3 class="text-lg font-semibold text-slate-900 mt-0.5" data-i18n="acad_3_title">Baccalauréat Général</h3>
+                        <p class="text-sm text-slate-500" data-i18n="acad_3_sub">Spécialités Mathématiques et Physique-Chimie — Mention Très Bien</p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. MOBILITÉ INTERNATIONALE (SIMPLIFIÉE) -->
+        <section id="mobilite" class="py-16 md:py-20 bg-slate-50 border-b border-slate-100">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6">
+                <h2 class="text-2xl font-bold text-slate-900 mb-3" data-i18n="mob_title">Projet de mobilité internationale</h2>
+                <p class="text-slate-600 text-sm sm:text-base max-w-3xl mb-8 leading-relaxed" data-i18n="mob_intro">
+                    Dans le cadre de ma scolarité d'ingénieur, je souhaite effectuer un semestre d'échange académique ou un stage à l'étranger afin de perfectionner mon anglais, découvrir de nouvelles méthodes de travail et m'ouvrir à une autre culture.
+                </p>
+
+                <!-- Grille simple des destinations envisagées -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    
+                    <div class="bg-white p-5 rounded-xl border border-slate-200">
+                        <div class="text-xs font-semibold text-blue-600 uppercase mb-1" data-i18n="mob_1_tag">Destination 1</div>
+                        <h3 class="font-semibold text-slate-900 text-base" data-i18n="mob_1_country">Canada (Montréal)</h3>
+                        <p class="text-sm text-slate-600 mt-2 leading-relaxed" data-i18n="mob_1_desc">
+                            Semestre d'études ou double diplôme (Polytechnique Montréal / ÉTS) pour leur excellence en informatique et intelligence artificielle.
+                        </p>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl border border-slate-200">
+                        <div class="text-xs font-semibold text-blue-600 uppercase mb-1" data-i18n="mob_2_tag">Destination 2</div>
+                        <h3 class="font-semibold text-slate-900 text-base" data-i18n="mob_2_country">Pays Nordiques (Suède / Norvège)</h3>
+                        <p class="text-sm text-slate-600 mt-2 leading-relaxed" data-i18n="mob_2_desc">
+                            Échange Erasmus+ avec des cours dispensés intégralement en anglais et une approche pédagogique très orientée projets.
+                        </p>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl border border-slate-200">
+                        <div class="text-xs font-semibold text-blue-600 uppercase mb-1" data-i18n="mob_3_tag">Option Stage</div>
+                        <h3 class="font-semibold text-slate-900 text-base" data-i18n="mob_3_country">Stage en Europe</h3>
+                        <p class="text-sm text-slate-600 mt-2 leading-relaxed" data-i18n="mob_3_desc">
+                            Réalisation d'un stage technique en entreprise ou en laboratoire de recherche dans un environnement anglophone.
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. ENGAGEMENT CIVIQUE & ÉCOLOGIQUE (SIMPLIFIÉ) -->
+        <section id="engagement" class="py-16 md:py-20 border-b border-slate-100">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6">
+                <h2 class="text-2xl font-bold text-slate-900 mb-3" data-i18n="civic_title">Engagement civique et écologique</h2>
+                <p class="text-slate-600 text-sm sm:text-base max-w-3xl mb-8 leading-relaxed" data-i18n="civic_intro">
+                    Le métier d'ingénieur implique une responsabilité sociale et environnementale. Voici les actions concrètes auxquelles je prends part en parallèle de mes études :
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    
+                    <!-- Bloc Engagement Écologique -->
+                    <div class="p-6 rounded-xl bg-slate-50 border border-slate-200 flex gap-4">
+                        <div class="text-emerald-600 text-xl mt-0.5">
+                            <i class="fa-solid fa-leaf"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-slate-900 text-base" data-i18n="civic_eco_title">Sensibilisation écologique & Numérique Responsable</h3>
+                            <p class="text-sm text-slate-600 mt-1.5 leading-relaxed" data-i18n="civic_eco_desc">
+                                Participation à la Fresque du Climat et réflexion sur l'impact environnemental du numérique (sobriété logicielle, allongement de la durée de vie du matériel informatique).
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Bloc Engagement Civique -->
+                    <div class="p-6 rounded-xl bg-slate-50 border border-slate-200 flex gap-4">
+                        <div class="text-blue-600 text-xl mt-0.5">
+                            <i class="fa-solid fa-hands-helping"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-slate-900 text-base" data-i18n="civic_soc_title">Entraide étudiante & Tutorat</h3>
+                            <p class="text-sm text-slate-600 mt-1.5 leading-relaxed" data-i18n="civic_soc_desc">
+                                Implication dans la vie associative de l'école et accompagnement d'élèves (aide aux devoirs et présentation des études scientifiques aux lycéens).
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. SPORTS & HOBBIES -->
+        <section id="hobbies" class="py-16 md:py-20 bg-slate-50">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6">
+                <h2 class="text-2xl font-bold text-slate-900 mb-6" data-i18n="hob_title">Sports & Hobbies</h2>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                    
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center flex-shrink-0">
+                            <i class="fa-solid fa-person-running"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-slate-900 text-sm" data-i18n="hob_1_title">Sport</h3>
+                            <p class="text-xs text-slate-600 mt-0.5" data-i18n="hob_1_desc">Course à pied, randonnée en montagne et sport collectif.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center flex-shrink-0">
+                            <i class="fa-solid fa-music"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-slate-900 text-sm" data-i18n="hob_2_title">Musique & Culture</h3>
+                            <p class="text-xs text-slate-600 mt-0.5" data-i18n="hob_2_desc">Pratique musicale, lecture et cinéma.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center flex-shrink-0">
+                            <i class="fa-solid fa-laptop-code"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-slate-900 text-sm" data-i18n="hob_3_title">Projets personnels</h3>
+                            <p class="text-xs text-slate-600 mt-0.5" data-i18n="hob_3_desc">Veille technologique, programmation et bricolage.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ================= VUE 2 : ONGLET PROJETS À PART ENTIÈRE ================= -->
+    <main id="view-projects" class="hidden flex-grow pt-28 pb-20">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6">
+            
+            <!-- En-tête de l'onglet Projets -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-8 border-b border-slate-200">
+                <div>
+                    <button onclick="switchTab('main')" class="inline-flex items-center gap-2 text-xs font-medium text-slate-500 hover:text-slate-900 mb-3 transition-colors">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span data-i18n="proj_back">Retour au profil</span>
+                    </button>
+                    <h1 class="text-3xl font-bold text-slate-900 tracking-tight" data-i18n="proj_page_title">Mes Projets</h1>
+                    <p class="text-slate-600 text-sm sm:text-base mt-1" data-i18n="proj_page_sub">
+                        Sélection de projets académiques et personnels réalisés durant mes études d'ingénieur et en CPGE.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Liste des projets (Grille sobre) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+
+                <!-- Projet 1 -->
+                <article class="bg-white rounded-xl border border-slate-200 p-6 flex flex-col justify-between hover:border-slate-300 transition-colors">
+                    <div>
+                        <div class="flex items-center justify-between text-xs text-slate-500 mb-2">
+                            <span class="font-semibold text-blue-600 uppercase" data-i18n="proj_1_type">Projet Académique — ENSEEIHT</span>
+                            <span>2025</span>
+                        </div>
+                        <h2 class="text-lg font-bold text-slate-900" data-i18n="proj_1_title">Conception d'un Compilateur</h2>
+                        <p class="text-sm text-slate-600 mt-2 leading-relaxed" data-i18n="proj_1_desc">
+                            Développement en équipe d'un compilateur pour un sous-ensemble du langage Java/Ada vers du code assembleur. Mise en œuvre de l'analyse lexicale, syntaxique, sémantique et génération de code.
+                        </p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
+                        <div class="flex flex-wrap gap-1.5">
+                            <span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-700 text-xs font-medium">OCaml / Java</span>
+                            <span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-700 text-xs font-medium">Grammaires</span>
+                            <span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-700 text-xs font-medium">Git</span>
+                        </div>
+                        <a href="https://github.com/" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold text-slate-700 hover:text-blue-600 flex items-center gap-1">
+                            <i class="fa-brands fa-github text-sm"></i> Code
+                        </a>
+                    </div>
+                </article>
+
+                <!-- Projet 2 -->
+                <article class="bg-white rounded-xl border border-slate-200 p-6 flex flex-col justify-between hover:border-slate-300 transition-colors">
+                    <div>
+                        <div class="flex items-center justify-between text-xs text-slate-500 mb-2">
+                            <span class="font-semibold text-blue-600 uppercase" data-i18n="proj_2_type">Projet Académique — ENSEEIHT</span>
+                            <span>2024 — 2025</span>
+                        </div>
+                        <h2 class="text-lg font-bold text-slate-900" data-i18n="proj_2_title">Simulation Réseau & Protocole de Routage</h2>
+                        <p class="text-sm text-slate-600 mt-2 leading-relaxed" data-i18n="proj_2_desc">
+                            Configuration et simulation d'une architecture réseau complète. Implémentation de mécanismes de transfert fiable de données et analyse de trafic.
+                        </p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
+                        <div class="flex flex-wrap gap-1.5">
+                            <span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-700 text-xs font-medium">C</span>
+                            <span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-700 text-xs font-medium">Linux</span>
+                            <span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-700 text-xs font-medium">TCP/IP</span>
+                        </div>
+                        <a href="https://github.com/" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold text-slate-700 hover:text-blue-600 flex items-center gap-1">
+                            <i class="fa-brands fa-github text-sm"></i> Code
+                        </a>
+                    </div>
+                </article>
+
+                <!-- Projet 3 -->
+                <article class="bg-white rounded-xl border border-slate-200 p-6 flex flex-col justify-between hover:border-slate-300 transition-colors">
+                    <div>
+                        <div class="flex items-center justify-between text-xs text-slate-500 mb-2">
+                            <span class="font-semibold text-blue-600 uppercase" data-i18n="proj_3_type">TIPE — Classes Préparatoires (MPI)</span>
+                            <span>2023 — 2024</span>
+                        </div>
+                        <h2 class="text-lg font-bold text-slate-900" data-i18n="proj_3_title">Optimisation d'Algorithmes de Graphes</h2>
+                        <p class="text-sm text-slate-600 mt-2 leading-relaxed" data-i18n="proj_3_desc">
+                            Travail d'Initiative Personnelle Encadré portant sur la recherche de plus courts chemins et l'optimisation de flots. Comparaison expérimentale des performances temporelles et spatiales.
+                        </p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
+                        <div class="flex flex-wrap gap-1.5">
+                            <span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-700 text-xs font-medium">Python</span>
+                            <span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-700 text-xs font-medium">OCaml</span>
+                            <span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-700 text-xs font-medium">Algorithmique</span>
+                        </div>
+                        <a href="#" onclick="handlePdfClick(event, 'Presentation_TIPE.pdf')" class="text-xs font-semibold text-slate-700 hover:text-blue-600 flex items-center gap-1">
+                            <i class="fa-regular fa-file-pdf text-sm"></i> <span data-i18n="proj_slides">Support</span>
+                        </a>
+                    </div>
+                </article>
+
+                <!-- Projet 4 -->
+                <article class="bg-white rounded-xl border border-slate-200 p-6 flex flex-col justify-between hover:border-slate-300 transition-colors">
+                    <div>
+                        <div class="flex items-center justify-between text-xs text-slate-500 mb-2">
+                            <span class="font-semibold text-blue-600 uppercase" data-i18n="proj_4_type">Projet Personnel</span>
+                            <span>2025</span>
+                        </div>
+                        <h2 class="text-lg font-bold text-slate-900" data-i18n="proj_4_title">Développement de ce e-Portfolio</h2>
+                        <p class="text-sm text-slate-600 mt-2 leading-relaxed" data-i18n="proj_4_desc">
+                            Création d'un site web personnel sobre et responsive permettant de présenter mon parcours d'élève-ingénieur, mes projets et mes documents en français et en anglais.
+                        </p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
+                        <div class="flex flex-wrap gap-1.5">
+                            <span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-700 text-xs font-medium">HTML / CSS</span>
+                            <span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-700 text-xs font-medium">Tailwind</span>
+                            <span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-700 text-xs font-medium">JavaScript</span>
+                        </div>
+                        <a href="https://github.com/" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold text-slate-700 hover:text-blue-600 flex items-center gap-1">
+                            <i class="fa-brands fa-github text-sm"></i> Code
+                        </a>
+                    </div>
+                </article>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- ================= FOOTER ================= -->
+    <footer class="bg-white border-t border-slate-200 py-8">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
+            <p>© 2026 Raphaël Depuydt — e-Portfolio</p>
+            <div class="flex items-center gap-5">
+                <a href="mailto:raphael.depuydt@etu.inp-toulouse.fr" class="hover:text-slate-900 transition-colors">
+                    <i class="fa-regular fa-envelope mr-1"></i>Contact
+                </a>
+                <a href="https://www.linkedin.com/in/raphaël-d-4a7b54256" target="_blank" rel="noopener noreferrer" class="hover:text-slate-900 transition-colors">
+                    <i class="fa-brands fa-linkedin mr-1"></i>LinkedIn
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ================= SCRIPT DE NAVIGATION PAR ONGLETS & TRADUCTION ================= -->
+    <script>
+        let currentLang = 'fr';
+        let currentTab = 'main';
+
+        const translations = {
+            fr: {
+                nav_home: "Accueil",
+                nav_academic: "Parcours",
+                nav_mobility: "Mobilité",
+                nav_civic: "Engagement",
+                nav_hobbies: "Sports & Hobbies",
+                nav_projects: "Projets",
+
+                hero_subtitle: "e-Portfolio — Élève-Ingénieur",
+                hero_bio: "Étudiant en école d'ingénieurs (Toulouse INP - ENSEEIHT) spécialisé en Sciences du Numérique. Bienvenue sur mon e-Portfolio qui regroupe mon parcours académique, mon projet de mobilité, mes engagements et mes réalisations.",
+                btn_cv_fr: "CV (Français)",
+                btn_cv_en: "CV (English)",
+                btn_see_projects: "Voir mes projets",
+                video_caption: "Vidéo de présentation (Elevator Pitch)",
+
+                acad_title: "Parcours académique",
+                acad_1_title: "Diplôme d'Ingénieur — Toulouse INP - ENSEEIHT",
+                acad_1_sub: "Filière Sciences du Numérique (Toulouse, France)",
+                acad_1_desc: "Formation d'ingénieur en informatique, développement logiciel, systèmes embarqués, réseaux et mathématiques appliquées. Réalisation de projets techniques en équipe.",
+                acad_2_title: "Classes Préparatoires aux Grandes Écoles (CPGE)",
+                acad_2_sub: "Filière MP2I / MPI",
+                acad_2_desc: "Deux années de formation intensive en informatique, mathématiques et physique en vue des concours nationaux d'entrée aux grandes écoles d'ingénieurs.",
+                acad_3_title: "Baccalauréat Général",
+                acad_3_sub: "Spécialités Mathématiques et Physique-Chimie — Mention Très Bien",
+
+                mob_title: "Projet de mobilité internationale",
+                mob_intro: "Dans le cadre de ma scolarité d'ingénieur, je souhaite effectuer un semestre d'échange académique ou un stage à l'étranger afin de perfectionner mon anglais, découvrir de nouvelles méthodes de travail et m'ouvrir à une autre culture.",
+                mob_1_tag: "Destination 1",
+                mob_1_country: "Canada (Montréal)",
+                mob_1_desc: "Semestre d'études ou double diplôme (Polytechnique Montréal / ÉTS) pour leur excellence en informatique et intelligence artificielle.",
+                mob_2_tag: "Destination 2",
+                mob_2_country: "Pays Nordiques (Suède / Norvège)",
+                mob_2_desc: "Échange Erasmus+ avec des cours dispensés intégralement en anglais et une approche pédagogique très orientée projets.",
+                mob_3_tag: "Option Stage",
+                mob_3_country: "Stage en Europe",
+                mob_3_desc: "Réalisation d'un stage technique en entreprise ou en laboratoire de recherche dans un environnement anglophone.",
+
+                civic_title: "Engagement civique et écologique",
+                civic_intro: "Le métier d'ingénieur implique une responsabilité sociale et environnementale. Voici les actions concrètes auxquelles je prends part en parallèle de mes études :",
+                civic_eco_title: "Sensibilisation écologique & Numérique Responsable",
+                civic_eco_desc: "Participation à la Fresque du Climat et réflexion sur l'impact environnemental du numérique (sobriété logicielle, allongement de la durée de vie du matériel informatique).",
+                civic_soc_title: "Entraide étudiante & Tutorat",
+                civic_soc_desc: "Implication dans la vie associative de l'école et accompagnement d'élèves (aide aux devoirs et présentation des études scientifiques aux lycéens).",
+
+                hob_title: "Sports & Hobbies",
+                hob_1_title: "Sport",
+                hob_1_desc: "Course à pied, randonnée en montagne et sport collectif.",
+                hob_2_title: "Musique & Culture",
+                hob_2_desc: "Pratique musicale, lecture et cinéma.",
+                hob_3_title: "Projets personnels",
+                hob_3_desc: "Veille technologique, programmation et bricolage.",
+
+                proj_back: "Retour au profil",
+                proj_page_title: "Mes Projets",
+                proj_page_sub: "Sélection de projets académiques et personnels réalisés durant mes études d'ingénieur et en CPGE.",
+                proj_1_type: "Projet Académique — ENSEEIHT",
+                proj_1_title: "Conception d'un Compilateur",
+                proj_1_desc: "Développement en équipe d'un compilateur pour un sous-ensemble du langage Java/Ada vers du code assembleur. Mise en œuvre de l'analyse lexicale, syntaxique, sémantique et génération de code.",
+                proj_2_type: "Projet Académique — ENSEEIHT",
+                proj_2_title: "Simulation Réseau & Protocole de Routage",
+                proj_2_desc: "Configuration et simulation d'une architecture réseau complète. Implémentation de mécanismes de transfert fiable de données et analyse de trafic.",
+                proj_3_type: "TIPE — Classes Préparatoires (MPI)",
+                proj_3_title: "Optimisation d'Algorithmes de Graphes",
+                proj_3_desc: "Travail d'Initiative Personnelle Encadré portant sur la recherche de plus courts chemins et l'optimisation de flots. Comparaison expérimentale des performances temporelles et spatiales.",
+                proj_slides: "Support",
+                proj_4_type: "Projet Personnel",
+                proj_4_title: "Développement de ce e-Portfolio",
+                proj_4_desc: "Création d'un site web personnel sobre et responsive permettant de présenter mon parcours d'élève-ingénieur, mes projets et mes documents en français et en anglais."
+            },
+            en: {
+                nav_home: "Home",
+                nav_academic: "Education",
+                nav_mobility: "Mobility",
+                nav_civic: "Engagement",
+                nav_hobbies: "Sports & Hobbies",
+                nav_projects: "Projects",
+
+                hero_subtitle: "e-Portfolio — Engineering Student",
+                hero_bio: "Engineering student at Toulouse INP - ENSEEIHT majoring in Computer Science & Digital Technology. Welcome to my e-Portfolio showcasing my academic background, international mobility project, civic engagement, and technical projects.",
+                btn_cv_fr: "CV (French)",
+                btn_cv_en: "Resume (English)",
+                btn_see_projects: "View my projects",
+                video_caption: "Self-Introduction Video (Elevator Pitch)",
+
+                acad_title: "Academic Background",
+                acad_1_title: "M.Sc. in Engineering — Toulouse INP - ENSEEIHT",
+                acad_1_sub: "Computer Science & Digital Sciences Department (Toulouse, France)",
+                acad_1_desc: "Graduate engineering program covering software development, embedded systems, computer networks, and applied mathematics through team-based technical projects.",
+                acad_2_title: "Preparatory Classes for Grandes Écoles (CPGE)",
+                acad_2_sub: "Computer Science, Mathematics & Physics (MP2I / MPI)",
+                acad_2_desc: "Two-year intensive undergraduate program in computer science, advanced mathematics, and physics preparing for the national competitive entrance exams.",
+                acad_3_title: "French High School Diploma (Baccalauréat)",
+                acad_3_sub: "Majors in Mathematics and Physics-Chemistry — Highest Honors",
+
+                mob_title: "International Mobility Project",
+                mob_intro: "As part of my engineering degree, I plan to complete an academic exchange semester or an internship abroad to strengthen my English fluency, discover new working methods, and experience another culture.",
+                mob_1_tag: "Choice 1",
+                mob_1_country: "Canada (Montreal)",
+                mob_1_desc: "Study semester or dual degree (Polytechnique Montréal / ÉTS), renowned for their computer science and AI programs.",
+                mob_2_tag: "Choice 2",
+                mob_2_country: "Nordic Countries (Sweden / Norway)",
+                mob_2_desc: "Erasmus+ exchange with courses taught entirely in English and a strong project-oriented teaching style.",
+                mob_3_tag: "Internship Option",
+                mob_3_country: "Internship in Europe",
+                mob_3_desc: "Technical internship in a company or research laboratory within an English-speaking environment.",
+
+                civic_title: "Civic & Ecological Engagement",
+                civic_intro: "Being an engineer carries both social and environmental responsibilities. Here are the initiatives I am involved in alongside my studies:",
+                civic_eco_title: "Ecological Awareness & Sustainable IT",
+                civic_eco_desc: "Participation in the Climate Fresk workshop and focus on reducing the environmental footprint of digital technologies (eco-design and hardware longevity).",
+                civic_soc_title: "Student Community & Tutoring",
+                civic_soc_desc: "Active participation in campus student life and tutoring high school students to help them with science subjects and higher education orientation.",
+
+                hob_title: "Sports & Hobbies",
+                hob_1_title: "Sports",
+                hob_1_desc: "Running, mountain hiking, and team sports.",
+                hob_2_title: "Music & Culture",
+                hob_2_desc: "Playing music, reading, and cinema.",
+                hob_3_title: "Personal Projects",
+                hob_3_desc: "Tech watch, coding, and DIY electronics.",
+
+                proj_back: "Back to profile",
+                proj_page_title: "My Projects",
+                proj_page_sub: "Selected academic and personal projects completed during my engineering studies and preparatory classes.",
+                proj_1_type: "Academic Project — ENSEEIHT",
+                proj_1_title: "Compiler Design & Implementation",
+                proj_1_desc: "Team development of a compiler translating a subset of Java/Ada into assembly code. Implemented lexical, syntax, and semantic analysis as well as code generation.",
+                proj_2_type: "Academic Project — ENSEEIHT",
+                proj_2_title: "Network Simulation & Routing Protocol",
+                proj_2_desc: "Configuration and simulation of a complete network architecture. Implementation of reliable data transfer mechanisms and packet traffic analysis.",
+                proj_3_type: "TIPE Research Project — CPGE (MPI)",
+                proj_3_title: "Graph Algorithm Optimization",
+                proj_3_desc: "Research project focusing on shortest-path algorithms and network flow optimization. Experimental benchmark of time and space complexity.",
+                proj_slides: "Slides",
+                proj_4_type: "Personal Project",
+                proj_4_title: "Engineering e-Portfolio Website",
+                proj_4_desc: "Design and development of a minimalist, responsive personal website to showcase my academic background, projects, and resumes in French and English."
+            }
+        };
+
+        // Bascule entre l'onglet principal ('main') et l'onglet Projets ('projects')
+        function switchTab(tabName) {
+            currentTab = tabName;
+            const mainView = document.getElementById('view-main');
+            const projectsView = document.getElementById('view-projects');
+            const projectsBtn = document.getElementById('nav-projects-btn');
+            const homeLink = document.getElementById('nav-home-link');
+
+            if (tabName === 'projects') {
+                // Met en pause la vidéo d'accueil si elle était en lecture
+                const video = document.getElementById('pitch-video');
+                if (video && !video.paused) video.pause();
+
+                mainView.classList.add('hidden');
+                projectsView.classList.remove('hidden');
+                projectsBtn.classList.add('bg-slate-900', 'text-white', 'hover:bg-slate-800', 'hover:text-white');
+                projectsBtn.classList.remove('text-slate-700', 'hover:bg-slate-100');
+                homeLink.classList.remove('tab-active');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                projectsView.classList.add('hidden');
+                mainView.classList.remove('hidden');
+                projectsBtn.classList.remove('bg-slate-900', 'text-white', 'hover:bg-slate-800', 'hover:text-white');
+                projectsBtn.classList.add('text-slate-700', 'hover:bg-slate-100');
+                homeLink.classList.add('tab-active');
+            }
+        }
+
+        // Permet de revenir sur la page principale et de scroller vers la section cliquée
+        function navigateToSection(event, sectionId) {
+            event.preventDefault();
+            if (currentTab !== 'main') {
+                switchTab('main');
+            }
+            const target = document.getElementById(sectionId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'fr' ? 'en' : 'fr';
+            document.documentElement.lang = currentLang;
+
+            // Affiche la langue vers laquelle on peut basculer sur le bouton
+            document.getElementById('lang-btn-text').textContent = currentLang === 'fr' ? 'EN' : 'FR';
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[currentLang][key]) {
+                    el.innerHTML = translations[currentLang][key];
+                }
+            });
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        function handlePdfClick(event, filename) {
+            event.preventDefault();
+            const msg = currentLang === 'fr'
+                ? `Placez votre fichier "${filename}" dans le dossier du site pour l'ouvrir.`
+                : `Place your "${filename}" file in the website folder to open it.`;
+            showToast(msg);
+        }
+
+        let toastTimer;
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').textContent = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3500);
+        }
+    </script>
+</body>
+</html>
