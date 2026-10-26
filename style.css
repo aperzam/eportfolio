@@ -1,0 +1,13 @@
+		body {
+            background-color: #ffffff;
+            color: #1e293b;
+        }
+        /* Barre de navigation sobre avec léger flou */
+        .simple-nav {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(8px);
+        }
+        .tab-active {
+            color: #0f172a;
+            font-weight: 600;
+        }
