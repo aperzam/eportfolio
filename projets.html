@@ -13,7 +13,6 @@
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <script src="script.js"></script>
 	<link rel="stylesheet" href="style.css">
         
 </head>
@@ -52,27 +51,29 @@
             </nav>
 
             <!-- Bouton de langue FR / EN & Menu Mobile -->
-            <div class="flex items-center gap-3">
+            <div class="ml-auto flex items-center gap-3">
                 <button onclick="toggleLanguage()" class="px-3 py-1.5 rounded-md border border-slate-300 hover:border-slate-400 bg-slate-50 text-xs font-semibold text-slate-700 transition-colors flex items-center gap-1.5" title="Change language">
                     <i class="fa-solid fa-globe text-slate-500"></i>
                     <span id="lang-btn">EN</span>
                 </button>
 
-                <button onclick="toggleMobileMenu()" class="md:hidden p-2 text-slate-600 hover:text-slate-900">
+                <button id="mobile-menu-button" type="button" onclick="toggleMobileMenu()"
+                    aria-label="Ouvrir ou fermer le menu" aria-controls="mobile-menu" aria-expanded="false"
+                    class="md:hidden p-2 text-slate-600 hover:text-slate-900">
                     <i id="mobile-icon" class="fa-solid fa-bars text-lg"></i>
                 </button>
             </div>
         </div>
 
         <!-- Menu Mobile -->
-        <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-slate-200 px-4 py-3 space-y-2 text-sm font-medium text-slate-700">
+        <div id="mobile-menu" class="hidden md:hidden absolute right-4 top-full w-56 rounded-lg border border-slate-200 bg-white px-4 py-3 shadow-lg space-y-2 text-sm font-medium text-slate-700">
             <a href="index.html#accueil" onclick="navigateToSection(event, 'accueil'); toggleMobileMenu()" class="block py-1.5 hover:text-slate-900" data-i18n="nav_home">Accueil</a>
             <a href="index.html#parcours" onclick="navigateToSection(event, 'parcours'); toggleMobileMenu()" class="block py-1.5 hover:text-slate-900" data-i18n="nav_academic">Parcours</a>
             <a href="index.html#mobilite" onclick="navigateToSection(event, 'mobilite'); toggleMobileMenu()" class="block py-1.5 hover:text-slate-900" data-i18n="nav_mobility">Mobilité</a>
             <a href="index.html#engagement" onclick="navigateToSection(event, 'engagement'); toggleMobileMenu()" class="block py-1.5 hover:text-slate-900" data-i18n="nav_civic">Engagement</a>
             <a href="index.html#hobbies" onclick="navigateToSection(event, 'hobbies'); toggleMobileMenu()" class="block py-1.5 hover:text-slate-900" data-i18n="nav_hobbies">Sports & Hobbies</a>
             <div class="pt-2 border-t border-slate-100">
-                <a href="projets.html" data-i18n="nav-projects">Projets</a>
+                <a href="projets.html" class="block py-1.5 hover:text-slate-900" data-i18n="nav_projects">Projets</a>
             </div>
         </div>
     </header>

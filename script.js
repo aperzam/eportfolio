@@ -21,7 +21,7 @@ const translations = {
         "mob_intro": "Dans le cadre de ma scolarité d'ingénieur, je souhaite effectuer un semestre d'échange académique ou un stage à l'étranger afin de perfectionner mon anglais, découvrir de nouvelles méthodes de travail et m'ouvrir à une autre culture.",
         "mob_1_tag": "Destination prévue",
         "mob_1_country": "Canada (Montréal)",
-        "mob_1_desc": "Semestre d'études ou double diplôme (Polytechnique Montréal) pour leur excellence en informatique. De plus le Canada offre un environnement bilingue ce qui permettrait de renforcer mes compétences lunguistiques en anglais.",
+        "mob_1_desc": "Semestre d'études ou double diplôme (Polytechnique Montréal) pour leur excellence en informatique. De plus le Canada offre un environnement bilingue ce qui permettrait de renforcer mes compétences linguistiques en anglais.",
         "eng_title": "Engagements",
         "eng_1_title": "Engagement écologique",
         "eng_1_desc": "Participation à des initiatives écologiques et durables pour réduire l'empreinte carbone et promouvoir la sensibilisation environnementale.",
@@ -112,6 +112,26 @@ function applyTranslations() {
     const langBtn = document.getElementById('lang-btn');
     if (langBtn) langBtn.textContent = currentLang === 'fr' ? 'EN' : 'FR';
 }
+
+function toggleMobileMenu() {
+    const menu = document.getElementById('mobile-menu');
+    const button = document.getElementById('mobile-menu-button');
+    const icon = document.getElementById('mobile-icon');
+
+    if (!menu || !button) {
+        console.error('Menu mobile ou bouton introuvable.');
+        return;
+    }
+
+    const opening = menu.classList.contains('hidden');
+    menu.classList.toggle('hidden', !opening);
+    button.setAttribute('aria-expanded', String(opening));
+    if (icon) {
+        icon.classList.toggle('fa-bars', !opening);
+        icon.classList.toggle('fa-xmark', opening);
+    }
+}
+
 
 // Appliquer la traduction au chargement de chaque page
 document.addEventListener('DOMContentLoaded', applyTranslations);
